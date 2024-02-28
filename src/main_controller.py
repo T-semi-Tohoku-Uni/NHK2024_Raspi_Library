@@ -39,10 +39,12 @@ class MainController:
         print("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
         time.sleep(0.01)
         
-    def read_udp(self):
-        data, addr = self.sock.recvfrom(1024)
+    def read_udp(self) -> str:
+        raw_data, raw_addr = self.sock.recvfrom(1024)
+        data = raw_data.decode()
+        addr = raw_addr[0].__str__()
         self.log_system.write("Read UDP : data={}, addr={}".format(data, addr))
-        self.log_system.write_with_udp_client_name(data, addr.__str__())
+        self.log_system.write_with_udp_client_name(data, addr)
         print("Read UDP : data={}, addr={}".format(data, addr))
         return data
     
