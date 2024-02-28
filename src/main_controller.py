@@ -5,6 +5,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Any
 from enum import Enum
 from .log_system import LogSystem
+import sys
 
 class MainController:
     def __init__(self, host_name, port):
@@ -28,7 +29,19 @@ class MainController:
         
     def write_can_bus(self, can_id: int, data: bytearray):
         msg = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
-        self.bus.send(msg, timeout=0.01)
+        
+        try:
+            self.bus.send(msg, timeout=0.01)
+        except can.exceptions.CanOperationError as e:
+            self.log_system.write("Buffer Error: " + e.__str__())
+            self.log_system.write_error_log("Buffer Error: " + e.__str__())
+            print("Buffer Error: " + e.__str__(), file=sys.stderr)
+            return
+        except Exception as e:
+            self.log_system.write("Error: " + e.__str__())
+            self.log_system.write_error_log("Error: " + e.__str__())
+            print("Error: " + e.__str__(), file=sys.stderr)
+            return
         
         self.log_system.write("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
         self.log_system.write_with_can_id(data.hex(), can_id)

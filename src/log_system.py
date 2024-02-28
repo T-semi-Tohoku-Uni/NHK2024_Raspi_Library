@@ -19,6 +19,10 @@ class LogSystem:
         self.udp_log_dir = os.path.join(self.log_dir, "udp")
         os.makedirs(self.udp_log_dir, exist_ok=True)
         
+        # create sub log directory (to save error or exception)
+        self.error_log_dir = os.path.join(self.log_dir, "error")
+        os.makedirs(self.error_log_dir, exist_ok=True)
+        
         # define main log file name (format: log_main.log)
         main_log_file_name = "log_main.log"
         self.main_log_file_path = os.path.join(self.log_dir, main_log_file_name)
@@ -53,6 +57,16 @@ class LogSystem:
             client_name (str): udp client name
         """
         with open(os.path.join(self.udp_log_dir, client_name + ".log"), "a") as log_file:
+            log_file.write(message + "\n")
+    
+    def write_error_log(self, message: str):
+        """
+        write error log message to error log file
+        
+        Args:
+            message (str): log message
+        """
+        with open(os.path.join(self.error_log_dir, "error.log"), "a") as log_file:
             log_file.write(message + "\n")
     
 if __name__ == "__main__":
