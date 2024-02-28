@@ -41,6 +41,12 @@ class MainController:
         self.log_system.write_with_udp_client_name(data, addr.__str__())
         return data
     
+    def __del__(self):
+        # close UDP socket
+        self.sock.close()
+        # close CAN socket
+        self.bus.shutdown()
+    
     @abstractmethod
     def main(self, *args: Any, **kwargs: Any) -> None:
         """
