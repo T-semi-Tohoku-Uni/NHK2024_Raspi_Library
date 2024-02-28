@@ -1,10 +1,10 @@
-from log_system import LogSystem
 import socket
 import can
 import time
 from abc import ABCMeta, abstractmethod
 from typing import Any
 from enum import Enum
+from .log_system import LogSystem
 
 class ButtonState(Enum):
     UP_WAIT = 0
