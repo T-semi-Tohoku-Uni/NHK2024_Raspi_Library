@@ -17,7 +17,9 @@ class MainController:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((host_name, port))
         self.log_system.write("Success : Init UDP socket")
+        self.log_system.write("host_name={}, port={}".format(host_name, port))
         print("Success : Init UDP socket")
+        print("host_name={}, port={}".format(host_name, port))
         
         # can通信の初期化
         self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=5000000)
