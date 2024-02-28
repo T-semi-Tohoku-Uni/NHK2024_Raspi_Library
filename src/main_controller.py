@@ -6,12 +6,6 @@ from typing import Any
 from enum import Enum
 from .log_system import LogSystem
 
-class ButtonState(Enum):
-    UP_WAIT = 0
-    UP_FINISH = 1
-    DOWN_WAIT = 2
-    DOWN_FINISH = 3
-
 class MainController:
     def __init__(self, host_name, port):
         # ログの初期化
