@@ -13,17 +13,15 @@ class ButtonState(Enum):
     DOWN_FINISH = 3
 
 class MainController:
-    def __init__(self, ip, port):
+    def __init__(self, host_name, port):
         # ログの初期化
         self.log_system = LogSystem()
         self.log_system.write("Success : Init Log system")
         
         # UDPの初期化
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((ip, port))
+        self.sock.bind((host_name, port))
         self.log_system.write("Success : Init UDP socket")
-        
-        # To do : CANのIDごとでログファイルを分けたい
         
         # can通信の初期化
         self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=5000000)
