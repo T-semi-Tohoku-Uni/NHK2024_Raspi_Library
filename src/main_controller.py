@@ -15,15 +15,29 @@ class MainController:
         print("Success : Init Log system")
         
         # UDPの初期化
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((host_name, port))
+        try:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self.sock.bind((host_name, port))
+        except Exception as e:
+            self.log_system.write_error_log("Init UDP Error: " + e.__str__())
+            self.log_system.write("Init UDP Error: " + e.__str__())
+            print("Init UDP Error: " + e.__str__(), file=sys.stderr)
+            sys.exit(1)
+
         self.log_system.write("Success : Init UDP socket")
         self.log_system.write("host_name={}, port={}".format(host_name, port))
         print("Success : Init UDP socket")
         print("host_name={}, port={}".format(host_name, port))
         
+        
         # can通信の初期化
-        self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=5000000)
+        try:
+            self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=5000000)
+        except Exception as e:
+            self.log_system.write_error_log("Init CAN Error: " + e.__str__())
+            self.log_system.write("Init CAN Error: " + e.__str__())
+            print("Init CAN Error: " + e.__str__(), file=sys.stderr)
+            sys.exit(1)
         self.log_system.write("Success : Init CAN socket")
         print("Success : Init CAN socket")
         
