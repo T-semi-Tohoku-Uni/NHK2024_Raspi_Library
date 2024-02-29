@@ -2,13 +2,13 @@ import socket
 import can
 import time
 from abc import ABCMeta, abstractmethod
-from typing import Any
+from typing import Any, Type
 from enum import Enum
 from .log_system import LogSystem
 import sys
 
 class MainController:
-    def __init__(self, host_name, port):
+    def __init__(self, host_name: str, port: str, lister: Type[can.Listener]):
         # ログの初期化
         self.log_system = LogSystem()
         self.log_system.write("Success : Init Log system")
@@ -40,6 +40,15 @@ class MainController:
             sys.exit(1)
         self.log_system.write("Success : Init CAN socket")
         print("Success : Init CAN socket")
+        
+        # canの受信の設定
+        try:
+            self.notifier = can.Notifier(self.bus, [lister])
+        except Exception as e:
+            self.log_system.write_error_log("Init CAN Listener Error: " + e.__str__())
+            self.log_system.write("Init CAN Listener Error: " + e.__str__())
+            print("Init CAN Listener Error: " + e.__str__(), file=sys.stderr)
+            sys.exit(1)
         
     def write_can_bus(self, can_id: int, data: bytearray):
         msg = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
@@ -74,6 +83,8 @@ class MainController:
     def __del__(self):
         # close UDP socket
         self.sock.close()
+        # close CAN notifier
+        self.notifier.stop()
         # close CAN socket
         self.bus.shutdown()
     
