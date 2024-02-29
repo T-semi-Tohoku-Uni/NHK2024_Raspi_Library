@@ -9,6 +9,9 @@ import sys
 
 class MainController:
     def __init__(self, host_name: str, port: str):
+        # can Listerの初期化(Noneのままだとエラー出るはず)
+        self.notifier = None
+        
         # ログの初期化
         self.log_system = LogSystem()
         self.log_system.write("Success : Init Log system")
