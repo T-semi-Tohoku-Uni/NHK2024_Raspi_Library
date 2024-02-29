@@ -8,7 +8,7 @@ from .log_system import LogSystem
 import sys
 
 class MainController:
-    def __init__(self, host_name: str, port: str, lister: Type[can.Listener]):
+    def __init__(self, host_name: str, port: str):
         # ログの初期化
         self.log_system = LogSystem()
         self.log_system.write("Success : Init Log system")
@@ -40,8 +40,8 @@ class MainController:
             sys.exit(1)
         self.log_system.write("Success : Init CAN socket")
         print("Success : Init CAN socket")
-        
-        # canの受信の設定
+    
+    def init_can_notifier(self, lister: Type[can.Listener]):
         try:
             self.notifier = can.Notifier(self.bus, [lister])
         except Exception as e:
@@ -49,7 +49,7 @@ class MainController:
             self.log_system.write("Init CAN Listener Error: " + e.__str__())
             print("Init CAN Listener Error: " + e.__str__(), file=sys.stderr)
             sys.exit(1)
-        
+    
     def write_can_bus(self, can_id: int, data: bytearray):
         msg = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
         
