@@ -35,7 +35,7 @@ class MainController:
         
         # can通信の初期化
         try:
-            self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=5000000)
+            self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=1000000, fd=True, data_bitrate=2000000)
         except Exception as e:
             self.log_system.write_error_log("Init CAN Error: " + e.__str__())
             self.log_system.write("Init CAN Error: " + e.__str__())
@@ -52,6 +52,8 @@ class MainController:
             self.log_system.write("Init CAN Listener Error: " + e.__str__())
             print("Init CAN Listener Error: " + e.__str__(), file=sys.stderr)
             sys.exit(1)
+        self.log_system.write("Success : Init CAN Listener")
+        print("Success : Init CAN Listener")
     
     def write_can_bus(self, can_id: int, data: bytearray):
         msg = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
