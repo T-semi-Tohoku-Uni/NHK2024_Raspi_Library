@@ -73,7 +73,7 @@ class LogSystem:
         with open(os.path.join(self.udp_log_dir, client_name + ".log"), "a") as log_file:
             log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
     
-    def write_error_log(self, message: str):
+    def update_error_log(self, message: str):
         """
         write error log message to error log file
         
@@ -86,5 +86,5 @@ class LogSystem:
 if __name__ == "__main__":
     log_system = LogSystem()
     log_system.write("This is a log message.")
-    log_system.write_with_can_id("This is a log message with can id.", 0x123)
+    # log_system.write_with_can_id("This is a log message with can id.", 0x123)
     log_system.write_with_udp_client_name("This is a log message with udp client name.", "client1")
