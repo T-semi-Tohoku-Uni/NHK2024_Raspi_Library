@@ -18,6 +18,12 @@ class LogSystem:
         self.can_log_dir = os.path.join(self.log_dir, "can")
         os.makedirs(self.can_log_dir, exist_ok=True)
         
+        self.received_can_log_dir = os.path.join(self.can_log_dir, "received")
+        os.makedirs(self.received_can_log_dir, exist_ok=True)
+        
+        self.send_can_log_dir = os.path.join(self.can_log_dir, "send")
+        os.makedirs(self.send_can_log_dir, exist_ok=True)
+        
         # create sub log directory (to save udp)
         self.udp_log_dir = os.path.join(self.log_dir, "udp")
         os.makedirs(self.udp_log_dir, exist_ok=True)
@@ -54,7 +60,22 @@ class LogSystem:
         with open(os.path.join(self.can_log_dir, str(arbitration_id) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
             writer = csv.writer(log_file)
             writer.writerow([timestamp, data])
-            
+    
+    def update_received_can_log(self, msg: can.Message):
+        arbitration_id: int = msg.arbitration_id
+        data: str = msg.data.hex()
+        timestamp: float = msg.timestamp
+        with open(os.path.join(self.received_can_log_dir, str(arbitration_id) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
+            writer = csv.writer(log_file)
+            writer.writerow([timestamp, data])
+    
+    def update_send_can_log(self, msg: can.Message):
+        arbitration_id: int = msg.arbitration_id
+        data: str = msg.data.hex()
+        timestamp: float = msg.timestamp
+        with open(os.path.join(self.send_can_log_dir, str(arbitration_id) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
+            writer = csv.writer(log_file)
+            writer.writerow([timestamp, data])
     
     def write_with_udp_client_name(self, message: str, client_name: str):
         """

@@ -73,7 +73,7 @@ class MainController:
             return
         
         self.log_system.write("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
-        self.log_system.write_with_can_id(msg)
+        self.log_system.update_send_can_log(msg)
         print("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
         time.sleep(0.01)
         
