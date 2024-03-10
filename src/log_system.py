@@ -50,7 +50,7 @@ class LogSystem:
         arbitration_id: int = msg.arbitration_id
         data: str = msg.data.hex()
         timestamp: float = msg.timestamp
-        with open(os.path.join(self.received_can_log_dir, str(arbitration_id) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
+        with open(os.path.join(self.received_can_log_dir, str(hex(arbitration_id)) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
             writer = csv.writer(log_file)
             writer.writerow([timestamp, data])
     
@@ -58,7 +58,7 @@ class LogSystem:
         arbitration_id: int = msg.arbitration_id
         data: str = msg.data.hex()
         timestamp: float = msg.timestamp
-        with open(os.path.join(self.send_can_log_dir, str(arbitration_id) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
+        with open(os.path.join(self.send_can_log_dir, str(hex(arbitration_id)) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
             writer = csv.writer(log_file)
             writer.writerow([timestamp, data])
     

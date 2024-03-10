@@ -72,9 +72,9 @@ class MainController:
             print("Error: " + e.__str__(), file=sys.stderr)
             return
         
-        self.log_system.write("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
+        self.log_system.write("Write CAN Bus : id={}, msg={}".format(hex(can_id), data.hex()))
         self.log_system.update_send_can_log(msg)
-        print("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
+        print("Write CAN Bus : id={}, msg={}".format(hex(can_id), data.hex()))
         time.sleep(0.01)
         
     def read_udp(self) -> str:
