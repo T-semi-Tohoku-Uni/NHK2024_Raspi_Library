@@ -56,7 +56,8 @@ class MainController:
         print("Success : Init CAN Listener")
     
     def write_can_bus(self, can_id: int, data: bytearray):
-        msg = can.Message(arbitration_id=can_id, data=data, is_extended_id=False)
+        current_timestamp = time.time()
+        msg = can.Message(timestamp=current_timestamp, arbitration_id=can_id, data=data, is_extended_id=False)
         
         try:
             self.bus.send(msg, timeout=0.01)
@@ -72,7 +73,7 @@ class MainController:
             return
         
         self.log_system.write("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
-        self.log_system.write_with_can_id(data.hex(), can_id)
+        self.log_system.write_with_can_id(msg)
         print("Write CAN Bus : id={}, msg={}".format(can_id, data.hex()))
         time.sleep(0.01)
         

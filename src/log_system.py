@@ -1,6 +1,8 @@
 import datetime
 import os
 import datetime
+import csv
+import can
 
 class LogSystem:
     def __init__(self):
@@ -38,7 +40,7 @@ class LogSystem:
         with open(self.main_log_file_path, "a") as log_file:
             log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
     
-    def write_with_can_id(self, message: str, can_id: int):
+    def write_with_can_id(self, msg: can.Message):
         """
         write log message to can log file
         
@@ -46,8 +48,13 @@ class LogSystem:
             message (str): log message
             can_id (int): can id
         """
-        with open(os.path.join(self.can_log_dir, str(can_id) + ".log"), "a") as log_file:
-            log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
+        arbitration_id: int = msg.arbitration_id
+        data: str = msg.data.hex()
+        timestamp: float = msg.timestamp
+        with open(os.path.join(self.can_log_dir, str(arbitration_id) + ".csv"), mode="a", newline='', encoding='utf-8') as log_file:
+            writer = csv.writer(log_file)
+            writer.writerow([timestamp, data])
+            
     
     def write_with_udp_client_name(self, message: str, client_name: str):
         """
