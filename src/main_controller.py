@@ -22,10 +22,10 @@ class MainController:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.sock.bind((host_name, port))
         except Exception as e:
-            self.log_system.write_error_log("Init UDP Error: " + e.__str__())
+            self.log_system.update_error_log("Init UDP Error: " + e.__str__())
             self.log_system.write("Init UDP Error: " + e.__str__())
             print("Init UDP Error: " + e.__str__(), file=sys.stderr)
-            sys.exit(1)
+            # sys.exit(1)
 
         self.log_system.write("Success : Init UDP socket")
         self.log_system.write("host_name={}, port={}".format(host_name, port))
@@ -37,7 +37,7 @@ class MainController:
         try:
             self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=1000000, fd=True, data_bitrate=2000000)
         except Exception as e:
-            self.log_system.write_error_log("Init CAN Error: " + e.__str__())
+            self.log_system.update_error_log("Init CAN Error: " + e.__str__())
             self.log_system.write("Init CAN Error: " + e.__str__())
             print("Init CAN Error: " + e.__str__(), file=sys.stderr)
             sys.exit(1)
@@ -48,7 +48,7 @@ class MainController:
         try:
             self.notifier = can.Notifier(self.bus, [lister])
         except Exception as e:
-            self.log_system.write_error_log("Init CAN Listener Error: " + e.__str__())
+            self.log_system.update_error_log("Init CAN Listener Error: " + e.__str__())
             self.log_system.write("Init CAN Listener Error: " + e.__str__())
             print("Init CAN Listener Error: " + e.__str__(), file=sys.stderr)
             sys.exit(1)
@@ -63,7 +63,7 @@ class MainController:
             self.bus.send(msg, timeout=0.01)
         except can.exceptions.CanOperationError as e:
             self.log_system.write("Buffer Error: " + e.__str__())
-            self.log_system.write_error_log("Buffer Error: " + e.__str__())
+            self.log_system.update_error_log("Buffer Error: " + e.__str__())
             print("Buffer Error: " + e.__str__(), file=sys.stderr)
             return
         except Exception as e:
