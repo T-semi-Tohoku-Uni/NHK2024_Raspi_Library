@@ -6,6 +6,7 @@ from typing import Any, Type
 from enum import Enum
 from .log_system import LogSystem
 import sys
+import os
 
 class MainController:
     def __init__(self, host_name: str, port: str, is_udp=True):
@@ -16,6 +17,13 @@ class MainController:
         self.log_system = LogSystem()
         self.log_system.write("Success : Init Log system")
         print("Success : Init Log system")
+        
+        # プロセスIDの取得
+        pid = os.getpid()
+        print(f"Process ID is {pid}")
+        print(f"sudo kill -9 {pid}")
+        self.log_system.write(f"Process ID is {pid}")
+        self.log_system.write(f"sudo kill -9 {pid}")
         
         # UDPの初期化
         if is_udp is True:
