@@ -8,7 +8,7 @@ from .log_system import LogSystem
 import sys
 
 class MainController:
-    def __init__(self, host_name: str, port: str):
+    def __init__(self, host_name: str, port: str, is_udp=True):
         # can Listerの初期化(Noneのままだとエラー出るはず)
         self.notifier = None
         
@@ -18,14 +18,15 @@ class MainController:
         print("Success : Init Log system")
         
         # UDPの初期化
-        try:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.sock.bind((host_name, port))
-        except Exception as e:
-            self.log_system.write_error_log("Init UDP Error: " + e.__str__())
-            self.log_system.write("Init UDP Error: " + e.__str__())
-            print("Init UDP Error: " + e.__str__(), file=sys.stderr)
-            sys.exit(1)
+        if is_udp is True:
+            try:
+                self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                self.sock.bind((host_name, port))
+            except Exception as e:
+                self.log_system.update_error_log("Init UDP Error: " + e.__str__())
+                self.log_system.write("Init UDP Error: " + e.__str__())
+                print("Init UDP Error: " + e.__str__(), file=sys.stderr)
+                sys.exit(1)
 
         self.log_system.write("Success : Init UDP socket")
         self.log_system.write("host_name={}, port={}".format(host_name, port))
@@ -37,7 +38,7 @@ class MainController:
         try:
             self.bus = can.interface.Bus(channel='can0', bustype='socketcan', bitrate=1000000, fd=True, data_bitrate=2000000)
         except Exception as e:
-            self.log_system.write_error_log("Init CAN Error: " + e.__str__())
+            self.log_system.update_error_log("Init CAN Error: " + e.__str__())
             self.log_system.write("Init CAN Error: " + e.__str__())
             print("Init CAN Error: " + e.__str__(), file=sys.stderr)
             sys.exit(1)
@@ -48,7 +49,7 @@ class MainController:
         try:
             self.notifier = can.Notifier(self.bus, [lister])
         except Exception as e:
-            self.log_system.write_error_log("Init CAN Listener Error: " + e.__str__())
+            self.log_system.update_error_log("Init CAN Listener Error: " + e.__str__())
             self.log_system.write("Init CAN Listener Error: " + e.__str__())
             print("Init CAN Listener Error: " + e.__str__(), file=sys.stderr)
             sys.exit(1)
@@ -63,12 +64,12 @@ class MainController:
             self.bus.send(msg, timeout=0.01)
         except can.exceptions.CanOperationError as e:
             self.log_system.write("Buffer Error: " + e.__str__())
-            self.log_system.write_error_log("Buffer Error: " + e.__str__())
+            self.log_system.update_error_log("Buffer Error: " + e.__str__())
             print("Buffer Error: " + e.__str__(), file=sys.stderr)
             return
         except Exception as e:
             self.log_system.write("Error: " + e.__str__())
-            self.log_system.write_error_log("Error: " + e.__str__())
+            self.log_system.update_error_log("Error: " + e.__str__())
             print("Error: " + e.__str__(), file=sys.stderr)
             return
         
@@ -88,11 +89,14 @@ class MainController:
     
     def __del__(self):
         # close UDP socket
-        self.sock.close()
+        if hasattr(self, 'sock') and self.sock is not None:
+            self.sock.close()
         # close CAN notifier
-        self.notifier.stop()
+        if hasattr(self, 'notifier') and self.notifier is not None:
+            self.notifier.stop()
         # close CAN socket
-        self.bus.shutdown()
+        if hasattr(self, 'bus') and self.bus is not None:
+            self.bus.shutdown()
     
     @abstractmethod
     def main(self, *args: Any, **kwargs: Any) -> None:
