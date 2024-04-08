@@ -84,7 +84,7 @@ class MainController:
         self.log_system.write(f"Send: {msg.__str__()}")
         self.log_system.update_send_can_log(msg)
         print(f"Send: {msg.__str__()}")
-        time.sleep(0.01)
+        #time.sleep(0.01)
         
     def read_udp(self) -> str:
         raw_data, raw_addr = self.sock.recvfrom(1024)
