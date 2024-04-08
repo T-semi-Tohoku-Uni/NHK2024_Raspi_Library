@@ -66,7 +66,7 @@ class MainController:
     
     def write_can_bus(self, can_id: int, data: bytearray):
         current_timestamp = time.time()
-        msg = can.Message(timestamp=current_timestamp, arbitration_id=can_id, data=data, is_extended_id=False)
+        msg = can.Message(timestamp=current_timestamp, arbitration_id=can_id, data=data, is_extended_id=False, is_rx=False)
         
         try:
             self.bus.send(msg, timeout=0.01)
