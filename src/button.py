@@ -1,6 +1,26 @@
 from enum import Enum
 from typing import Callable
 
+class OneStateButton(Enum):
+    WAIT = 0x00
+    FINISH = 0x01
+
+class OneStateButtonHandler:
+    def __init__(self, state=OneStateButton.WAIT):
+        self.state = state
+    
+    def handle_button(
+        self,
+        is_pressed: int,
+        action_send: Callable[[], None]
+    ):
+        if is_pressed and self.state == OneStateButton.WAIT:
+            self.state = OneStateButton.FINISH
+            action_send()
+            
+        if not is_pressed and self.state == OneStateButton.FINISH:
+            self.state = OneStateButton.WAIT
+
 class TwoStateButton(Enum):
     WAIAT_0 = 0x00
     FINISH_0 = 0x01
@@ -17,6 +37,7 @@ class TwoStateButtonHandler:
         action_send_0: Callable[[], None], 
         action_send_1: Callable[[], None]
     ):
+        
         if is_pressed and self.state == TwoStateButton.WAIAT_0:
             self.state = TwoStateButton.FINISH_0
             action_send_0()
@@ -30,8 +51,7 @@ class TwoStateButtonHandler:
         
         if not is_pressed and self.state == TwoStateButton.FINISH_1:
             self.state = TwoStateButton.WAIAT_0
-            
-
+        
 class ThreeStateButton(Enum):
     WAIT_0 = 0x00
     FINISH_0 = 0x01
