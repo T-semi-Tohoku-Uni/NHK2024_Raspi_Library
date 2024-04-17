@@ -35,17 +35,31 @@ class LogSystem:
         # define main log file name (format: log_main.log)
         main_log_file_name = "log_main.log"
         self.main_log_file_path = os.path.join(self.log_dir, main_log_file_name)
-        
-    def write(self, message):
+    
+        # define user create file
+        self.user_create_file = {}
+
+    def create_new_log(self, file_name: str):
+        user_create_file_path = os.path.join(self.log_dir, file_name)
+        self.user_create_file[file_name] = user_create_file_path
+
+    def write(self, message, log_file_name = None):
         """
         write log message to main log file
         
         Args:
             message (str): log message
         """
-        with open(self.main_log_file_path, "a") as log_file:
+        if log_file_name is None:
+            log_file_path = self.main_log_file_path
+        else:
+            if not log_file_name in self.user_create_file:
+                return
+            log_file_path = self.user_create_file[log_file_name]
+
+        with open(log_file_path, "a") as log_file:
             log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
-    
+
     def update_received_can_log(self, msg: can.Message):
         arbitration_id: int = msg.arbitration_id
         data: str = msg.data.hex()
@@ -88,3 +102,5 @@ if __name__ == "__main__":
     log_system.write("This is a log message.")
     # log_system.write_with_can_id("This is a log message with can id.", 0x123)
     log_system.write_with_udp_client_name("This is a log message with udp client name.", "client1")
+    log_system.create_new_log("new_file")
+    log_system.write("sample", "new_file")
