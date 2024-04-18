@@ -58,7 +58,7 @@ class LogSystem:
             log_file_path = self.user_create_file[log_file_name]
 
         with open(log_file_path, "a") as log_file:
-            log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
+            log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')} {message}\n")
 
     def update_received_can_log(self, msg: can.Message):
         arbitration_id: int = msg.arbitration_id
