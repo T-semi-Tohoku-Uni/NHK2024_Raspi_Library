@@ -51,7 +51,16 @@ class TwoStateButtonHandler:
         
         if not is_pressed and self.state == TwoStateButton.FINISH_1:
             self.state = TwoStateButton.WAIAT_0
-        
+    
+    def transision_next_state(
+        self,
+        current_state: int,
+    ):
+        if current_state == 0:
+            self.state = TwoStateButton.WAIT_1
+        elif current_state == 1:
+            self.state = TwoStateButton.WAIAT_0
+         
 class ThreeStateButton(Enum):
     WAIT_0 = 0x00
     FINISH_0 = 0x01

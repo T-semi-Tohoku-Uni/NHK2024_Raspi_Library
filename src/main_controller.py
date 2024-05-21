@@ -7,6 +7,7 @@ from enum import Enum
 from .log_system import LogSystem
 import sys
 import os
+import select
 
 class MainController:
     def __init__(self, host_name: str = None, port: str = None, port_for_wheel_controle: str = None, is_udp=True):
@@ -114,6 +115,13 @@ class MainController:
         self.log_system.write_with_udp_client_name(data, addr)
         print("Read UDP : data={}, addr={}".format(data, addr))
         return data
+    
+    def clear_udp_socket(self, socket_to_clear: socket):
+        while True:
+            ready = select.select([socket_to_clear], [], [], 0.0)[0]
+            if not ready:
+                break  # バッファが空なのでループを抜ける
+            _, _ = socket_to_clear.recvfrom(1024)  # バッファからデータを読み出す
     
     def read_udp_for_wheel_controle(self) -> str:
         raw_data, raw_addr = self.socket_for_wheel_controle.recvfrom(1024)
