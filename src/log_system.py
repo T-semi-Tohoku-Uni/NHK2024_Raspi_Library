@@ -97,6 +97,9 @@ class LogSystem:
         with open(os.path.join(self.error_log_dir, "error.log"), "a") as log_file:
             log_file.write(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} {message}\n")
     
+    def get_log_dir(self):
+        return self.log_dir
+    
 if __name__ == "__main__":
     log_system = LogSystem()
     log_system.write("This is a log message.")
